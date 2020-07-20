@@ -27,17 +27,22 @@ static class Player
 
   static public void Action()
   {
-    Console.WriteLine ($"________________");
-    Console.WriteLine("1 - Атаковать");
-    Console.WriteLine($"2 - Пить зелье здоровья (+{kpotion}HP)");
+    
     string action = "0";
     do
     {
+      Console.WriteLine ($"________________");
+      Console.WriteLine("1 - Атаковать");
+      Console.WriteLine($"2 - Пить зелье здоровья (+{kpotion}HP)");
       action = Console.ReadLine();
       switch (action)
       {
         case "1":
-          Attack();
+          bool success = Attack();
+          if (!success)
+          {
+            action = "0";
+          }
           break;
         case "2":
           TakeHealPotion();
@@ -57,27 +62,29 @@ static class Player
     Console.WriteLine ($"Вы - LVL: {lvl}({currentxp}%) HP: {Player.hp}/{maxhp}; DMG: {Player.dmg}; Зелий: {Player.potionCount}");
   }
 
-  static void Attack()
+  static bool Attack()
   {
     string choose = "";
-    int chooseInt = 0;
+    int chooseInt = -1;
     do{
       Console.WriteLine ($"________________");
-      Console.WriteLine("Выберите врага, которого хотите атаковать");
+      Console.WriteLine("Выберите врага, которого хотите атаковать");      
       Room.ShowEnemyList();
+      Console.WriteLine("0 - Назад");
       choose = Console.ReadLine();
       bool success = Int32.TryParse(choose, out chooseInt);
          if (success)
          {
+           if (chooseInt == 0) return false;
            //Проверяем, входит ли номер в наш список врагов
            if(!Room.enemies.ContainsKey(chooseInt))
            {
              Console.WriteLine ($"________________");
              Console.WriteLine($"Врага с номером {choose} не найдено");
-             chooseInt = 0;
+             chooseInt = -1;
            }
          }
-    } while (chooseInt == 0);
+    } while (chooseInt == -1);
     Console.Clear();
     Enemy enemy = Room.enemies[chooseInt];
     Console.WriteLine ($"________________");
@@ -87,8 +94,7 @@ static class Player
       Console.WriteLine($"{enemy.name} №{choose} умер. +{enemy.xp} XP");
       GetXP(enemy.xp);
     }
-    
-
+    return true;
   }
 
   static public void TakeHealPotion()
@@ -343,7 +349,7 @@ static class Room
     Console.WriteLine();
     foreach(KeyValuePair<int, Enemy>  kvpenemy in enemies)
     {
-      Console.WriteLine($"{kvpenemy.Key}. - {kvpenemy.Value.name} (HP: {kvpenemy.Value.hp} DMG: {kvpenemy.Value.dmg})");
+      Console.WriteLine($"{kvpenemy.Key} - {kvpenemy.Value.name} (HP: {kvpenemy.Value.hp} DMG: {kvpenemy.Value.dmg})");
     }
   }
 }
