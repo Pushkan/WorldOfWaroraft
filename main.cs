@@ -212,10 +212,11 @@ static class Room
   static public bool ended = true;
   static public Dictionary<int, Enemy> enemies = new Dictionary<int, Enemy>();
   static public int numberRoom = 0;
+  static bool chestClosed = true;
 
   static public void NextRoom()
   {
-
+    chestClosed = true;
     Console.Clear();
     Console.WriteLine ($"________________");
     Console.WriteLine ($"Вы зашли в следующую комнату №{++numberRoom}");
@@ -275,11 +276,13 @@ static class Room
   {
     int xp = System.Convert.ToInt32(Math.Floor(10 * Math.Pow(1.3f, numberRoom)));;
     Player.GetXP(xp);
-    Console.WriteLine ($"________________");
-    Console.WriteLine ($"Вы зачистили комнату. +{xp} XP");
+    if(chestClosed)
+    {
+      Console.WriteLine ($"________________");
+      Console.WriteLine ($"Вы зачистили комнату. +{xp} XP");
+    }
     Player.Status();    
-    string action = "0";
-    bool chestClosed = true;
+    string action = "0";    
     do
     {      
       Console.WriteLine ($"________________");
@@ -300,8 +303,8 @@ static class Room
         case "3":
           if(chestClosed)
           {
-            CheckChest();
             chestClosed = false;
+            CheckChest();            
           }
           else
           {
@@ -352,7 +355,7 @@ class Troll:Enemy
     lvl = _lvl;
     float khp = Room.rand.Next(50, 62)/100f;
     float kdmg = Room.rand.Next(30, 42)/100f;
-    xp = System.Convert.ToInt32(Math.Floor(50 * Math.Pow(1.2f, lvl)));
+    xp = System.Convert.ToInt32(Math.Floor(40 * Math.Pow(1.2f, lvl)));
     
     hp = System.Convert.ToInt32(Math.Floor(khp * xp));
     dmg = System.Convert.ToInt32(Math.Floor(kdmg * xp));
@@ -368,9 +371,9 @@ class Mimic:Enemy
   public Mimic(int _lvl)
   {
     lvl = _lvl;
-    float khp = Room.rand.Next(110, 150)/100f;
-    float kdmg = Room.rand.Next(51, 76)/100f;
-    xp = System.Convert.ToInt32(Math.Floor(50 * Math.Pow(1.2f, lvl)));
+    float khp = Room.rand.Next(100, 130)/100f;
+    float kdmg = Room.rand.Next(40, 65)/100f;
+    xp = System.Convert.ToInt32(Math.Floor(40 * Math.Pow(1.2f, lvl)));
     
     hp = System.Convert.ToInt32(Math.Floor(khp * xp));
     dmg = System.Convert.ToInt32(Math.Floor(kdmg * xp));
